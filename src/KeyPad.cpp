@@ -165,13 +165,6 @@ void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_
     lv_style_set_bg_color(&style_pr, lv_palette_darken(LV_PALETTE_BLUE, 2));
     lv_style_set_bg_grad_color(&style_pr, lv_palette_darken(LV_PALETTE_BLUE, 4));
 
-    /*Add a transition to the outline*/
-    static lv_style_transition_dsc_t trans;
-    static lv_style_prop_t props[] = {LV_STYLE_OUTLINE_WIDTH, LV_STYLE_OUTLINE_OPA, 0};
-    lv_style_transition_dsc_init(&trans, props, lv_anim_path_linear, 300, 0, NULL);
-
-    lv_style_set_transition(&style_pr, &trans);
-
     button = lv_button_create(lv_scr_act());
     lv_obj_remove_style_all(button);                          /*Remove the style coming from the theme*/
     lv_obj_add_style(button, &style, 0);
