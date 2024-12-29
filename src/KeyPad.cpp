@@ -24,7 +24,7 @@ char* numStr(int number) {
 }
 
 //static lv_obj_t *label;
-void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_txt);
+void lv_button(struct Button * kp_button, lv_obj_t *button, int x, int y, int w, int h, const char * label_txt);
 
 struct Button {
     int x, y;       
@@ -56,7 +56,7 @@ void drawButton(struct KeyPad* KeyPad, int i, int color)
   {
     color = KeyPad->Buttons[i].color;
   }
-  lv_button(KeyPad->Buttons->button, x, y, w, h, number);
+  lv_button(&(KeyPad->Buttons[i]), KeyPad->Buttons[i].button, x, y, w, h, number);
 }
 
 void drawKeyPad(struct KeyPad* KeyPad)
@@ -65,6 +65,14 @@ void drawKeyPad(struct KeyPad* KeyPad)
   {
     drawButton(KeyPad, i, 0);
   }
+}
+
+static void button_click_cb(lv_event_t *event)
+{
+  Button *button;
+  button = (struct Button *)lv_event_get_user_data(event);
+  int number = button->number;
+  //handle any action on button press here
 }
 
 void addButton(struct KeyPad* KeyPad, int i, int x, int y, int w, int h, int color)
@@ -110,22 +118,7 @@ void initKeyPad(struct KeyPad* KeyPad, int offset, int w, int h, int color)
   }
 }
 
-//int checkKeyPad(struct KeyPad* KeyPad, int x, int y)
-//{
-//  for(int i = 0; i < 9; i++)
-//  {
-//    if(x > KeyPad->Buttons[i].x && x < KeyPad->Buttons[i].x + KeyPad->Buttons[i].w)
-//    {
-//      if(y > KeyPad->Buttons[i].y && y < KeyPad->Buttons[i].y + KeyPad->Buttons[i].h)
-//      {
-//        return i;
-//      }
-//    }
-//  }
-//  return -1;
-//}
-
-void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_txt)
+void lv_button(Button *kp_button, lv_obj_t *button, int x, int y, int w, int h, const char * label_txt)
 {
     /*Init the style for the default state*/
     static lv_style_t style;
@@ -178,6 +171,7 @@ void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_
     lv_obj_set_y(button, y);
     lv_obj_set_width(button, w);
     lv_obj_set_height(button, h);
+    lv_obj_add_event_cb(button, button_click_cb, LV_EVENT_CLICKED, kp_button);
 }
 
 void initWifi(const char* ssid, const char* password, int channel, int ssid_hidden, int max_connections)
