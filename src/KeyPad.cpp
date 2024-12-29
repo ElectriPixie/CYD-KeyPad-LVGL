@@ -5,6 +5,13 @@
 #include <widgets/label/lv_label.h>
 #include <widgets/button/lv_button.h>
 #include <string>
+#include <WiFi.h>
+#include "WifiPasswd.h"
+
+//Set USE_WIFI to 1 to enable wifi currently only AP mode is setup
+//USE_WIFI_AP needs to be 1 for the AP to be enabled, edit the settings in inc/WifiPasswd.h before enabling
+#define USE_WIFI 0 
+#define USE_WIFI_AP 1
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -170,7 +177,6 @@ void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_
     lv_obj_add_style(button, &style, 0);
     lv_obj_add_style(button, &style_pr, LV_STATE_PRESSED);
     lv_obj_set_size(button, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    //lv_obj_center(button);
 
     lv_obj_t * label = lv_label_create(button);
     lv_label_set_text(label, label_txt);
@@ -181,6 +187,16 @@ void lv_button(lv_obj_t *button, int x, int y, int w, int h, const char * label_
     lv_obj_set_height(button, h);
 }
 
+void initWifi(const char* ssid, const char* password, int channel, int ssid_hidden, int max_connections)
+{
+  if(USE_WIFI_AP)
+  {
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP(ssid, password, channel, ssid_hidden, max_connections);
+  }
+}
+
+
 void setup()
 {
   smartdisplay_init();
@@ -188,6 +204,10 @@ void setup()
   lv_display_set_rotation(display, LV_DISPLAY_ROTATION_270);
   initKeyPad(&KeyPad, 5, SCREEN_WIDTH, SCREEN_HEIGHT, TFT_GREEN);
   drawKeyPad(&KeyPad);
+  if(USE_WIFI)
+  {
+    initWifi(ssid, password, 11, 0, 4);
+  }
 }
 
 auto lv_last_tick = millis();
